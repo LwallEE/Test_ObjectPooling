@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AdjustBorderScreen : MonoBehaviour
+public class AdjustBorderScreen : MonoBehaviour //script for auto adjust the pos of border for different screen size
 {
    [SerializeField] private Transform leftBorder;
    [SerializeField] private Transform rightBorder;

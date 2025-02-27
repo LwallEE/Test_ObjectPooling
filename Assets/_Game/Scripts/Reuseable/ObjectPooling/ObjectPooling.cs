@@ -6,19 +6,21 @@ using UnityEngine;
 [Serializable]
 public struct PoolAmount
 {
-    public EPoolType poolType;
+    public EPoolType poolType; 
     public GameUnit prefab;
     public int amount;
 }
-public class ObjectPooling : Singleton<ObjectPooling>
+public class ObjectPooling : Singleton<ObjectPooling> //Manage all Pool for reusable
 {
-    private Dictionary<EPoolType, Pool> poolInstance = new Dictionary<EPoolType, Pool>();
-    [SerializeField] private PoolAmount[] poolAmounts;
-
+    //use for save data of all Pool
+    private Dictionary<EPoolType, Pool> poolInstance = new Dictionary<EPoolType, Pool>(); //use for faster retrieve by EPoolType
+    
+    [SerializeField] private PoolAmount[] poolAmounts; //data for preload, need to assign all EPoolType otherwise 
+                                                        //it will log error later
     protected override void Awake()
     {
         base.Awake();
-        for (int i = 0; i < poolAmounts.Length; i++)
+        for (int i = 0; i < poolAmounts.Length; i++) //preload all pool
         {
             Preload(poolAmounts[i].poolType, poolAmounts[i].prefab, poolAmounts[i].amount);
         }
@@ -32,22 +34,23 @@ public class ObjectPooling : Singleton<ObjectPooling>
             return;
         }
         
-        if (!poolInstance.ContainsKey(type) || poolInstance[type] == null)
+        if (!poolInstance.ContainsKey(type) || poolInstance[type] == null) 
         {
-            if (parent == null)
+            if (parent == null) //if the parameter parent is not assign, auto create new one for each pool
             {
                 parent = new GameObject(prefab.gameObject.name).transform;
                 parent.transform.position = Vector3.zero;
                 parent.SetParent(transform);
             }
-            Pool p = new Pool();
-            p.PreLoad(type, prefab, amount, parent);
-            poolInstance[type] = p;
+            Pool p = new Pool(); //create new pool
+            p.PreLoad(type, prefab, amount, parent); //preload this pool
+            poolInstance[type] = p; //save in dictionary by key is EPoolType and value is Pool
         }
         
     }
 
-    public T Spawn<T>(EPoolType typeKey, Vector3 pos = default, Quaternion rot = default) where T: GameUnit
+    //Method for retrieve object from pool, use generic and GameUnit for not use GetComponent
+    public T Spawn<T>(EPoolType typeKey, Vector3 pos = default, Quaternion rot = default) where T: GameUnit 
     {
         if (!poolInstance.ContainsKey(typeKey))
         {
@@ -57,7 +60,7 @@ public class ObjectPooling : Singleton<ObjectPooling>
         return poolInstance[typeKey].Spawn(pos, rot) as T;
     }
 
-    //Take the object to pool
+    //return object to pool
     public void Despawn(GameUnit unit)
     {
         var key = unit.GetPoolTypeKey();
@@ -109,14 +112,15 @@ public class ObjectPooling : Singleton<ObjectPooling>
     
 }
 
-public class Pool
+public class Pool //Manage pool of one EPoolType
 {
-    private Transform parent;
+    private Transform parent; //parent transform container
     private GameUnit prefab;
 
-    private EPoolType poolTypeKey;
-    //list contain unit is not using
-    private Queue<GameUnit> inactives = new Queue<GameUnit>();
+    private EPoolType poolTypeKey; //use for apply PoolType to GameUnit when Spawn
+    
+    //queue contain unit is not using
+    private Queue<GameUnit> inactives = new Queue<GameUnit>(); //use for quicker retrieve object from pool
     //list contain unit is using
     private List<GameUnit> actives = new List<GameUnit>();
 
@@ -129,29 +133,29 @@ public class Pool
         //Debug.Log(amount);
         for (int i = 0; i < amount; i++)
         {
-            Spawn(Vector3.zero, Quaternion.identity);
+            Spawn(Vector3.zero, Quaternion.identity); //Spawn prefab
         }
-        Collect();
+        Collect(); //then disable all
     }
 
     //get element from pool
     public GameUnit Spawn(Vector3 pos, Quaternion rot )
     {
         GameUnit unit;
-        if (inactives.Count <= 0)
+        if (inactives.Count <= 0) // if doesn't have object available in pool, create new one
         {
             unit = GameObject.Instantiate(prefab, parent);
         }
         else
         {
-            unit = inactives.Dequeue();
+            unit = inactives.Dequeue(); //else retrieve the front in the queue then remove it
         }
-        
+        //Setup
         unit.Tf.SetLocalPositionAndRotation(pos, rot);
         unit.SetPoolTypeKey(poolTypeKey);
         unit.gameObject.SetActive(true);
         unit.Respawn();
-        actives.Add(unit);
+        actives.Add(unit); //Add unit to actives list
         return unit;
     }
     
@@ -159,9 +163,8 @@ public class Pool
     //return element to pool
     public void Despawn(GameUnit unit)
     {
-        if (unit != null && unit.gameObject.activeSelf)
+        if (unit != null && unit.gameObject.activeSelf && actives.Remove(unit)) //only handle if object is active and unit is in actives list
         {
-            actives.Remove(unit);
             inactives.Enqueue(unit);
             unit.gameObject.SetActive(false);
             unit.Tf.SetParent(parent);

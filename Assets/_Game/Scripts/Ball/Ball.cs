@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ball : GameUnit
+public class Ball : GameUnit //base class of all ball
 {
     protected Rigidbody2D _rigidbody;
 
-    [SerializeField] protected float speed;
+    [SerializeField] protected float speed; //initial speed for moving
 
     private void Awake()
     {
@@ -18,12 +18,10 @@ public class Ball : GameUnit
     {
         _rigidbody.velocity = direction.normalized * speed;
     }
-
-    protected virtual void OnTouchWall(Vector2 normalCollision, Vector2 incomingDirection)
-    {
-        /*Vector2 reflectDirection = Vector2.Reflect(_rigidbody.velocity.normalized, normalCollision);
-        Debug.Log(_rigidbody.velocity + " " + normalCollision + " " + reflectDirection);
-        _rigidbody.velocity = reflectDirection * speed;*/
+    //virtual method for different behaviour of each ball
+    protected virtual void OnTouchWall(Vector2 normalCollision, Vector2 incomingDirection) //call when ball touch wall, incoming Direction is the direction going to the wall
+    {                                                                                       //normalCollision is normal direction of surface contact
+        
     }
 
     public void AddForce(Vector2 direction, float force)

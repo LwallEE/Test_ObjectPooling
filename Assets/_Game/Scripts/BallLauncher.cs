@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class BallLauncher : MonoBehaviour
+public class BallLauncher : MonoBehaviour //launcher ball, responsibility for check input of player and spawn ball
 {
-    private bool isMouseDown;
-    [SerializeField] private float numberOfBallSPerSecond;
-    [SerializeField] private float offsetY;
+    private bool isMouseDown; //for control is player is holding in screen
+    [SerializeField] private float numberOfBallSPerSecond; //speed for shoot
+    [SerializeField] private float offsetY; //offset for the bottom pos of screen
     private float currentCountDownToShoot; //Count down time for the next shooting time
     private void Awake()
     {
@@ -31,7 +31,7 @@ public class BallLauncher : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) //Check player Input, when touch the screen
         {
             isMouseDown = true;
-            currentCountDownToShoot = 0f; //Immidiately shoot if player click
+            currentCountDownToShoot = 0f; //Immediately shoot if player click
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -41,23 +41,23 @@ public class BallLauncher : MonoBehaviour
 
     void CheckShooting() //function for check time to next shooting
     {
-        if (!isMouseDown) return;
+        if (!isMouseDown) return; //if player isn't holding, return
         if (currentCountDownToShoot <= 0)
         {
             Shoot();
-            currentCountDownToShoot = 1.0f/ numberOfBallSPerSecond;
+            currentCountDownToShoot = 1.0f/ numberOfBallSPerSecond; //function to calculate time wait for next shooting
         }
-        else
+        else //reduce time until to the next shooting
         {
             currentCountDownToShoot -= Time.deltaTime;
         }
     }
 
-    void Shoot()
+    void Shoot() //function for shoot
     {
         EPoolType ballType = GetRandomBallType();
         Vector2 startPos = GetBottomMiddlePosOfScreen();
-        Vector2 direction = ((Vector2)CameraController.Instance.GetMousePositionWorld() - startPos);
+        Vector2 direction = ((Vector2)CameraController.Instance.GetMousePositionWorld() - startPos);//direction for shooting ball
         
         ObjectPooling.Instance.Spawn<Ball>(ballType, startPos).OnInit(direction);
     }

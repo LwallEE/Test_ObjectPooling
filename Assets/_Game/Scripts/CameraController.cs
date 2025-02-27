@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : Singleton<CameraController>
+public class CameraController : Singleton<CameraController> //has some function for retrieve data about screen 
 {
     private Camera cam;
     protected override void Awake()

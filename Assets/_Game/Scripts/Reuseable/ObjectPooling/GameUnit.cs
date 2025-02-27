@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameUnit : MonoBehaviour
+public class GameUnit : MonoBehaviour  //Base class for object in Pool, use for retrieve class by type casting instead of GetComponent
 {
 
-    private Transform tf;
+    private Transform tf; //cache transform
 
     public Transform Tf
     {
@@ -21,7 +21,7 @@ public class GameUnit : MonoBehaviour
         }
     }
 
-    private EPoolType poolTypeKey;
+    private EPoolType poolTypeKey; //poolType using for Despawn method
 
     public EPoolType GetPoolTypeKey()
     {
@@ -33,12 +33,12 @@ public class GameUnit : MonoBehaviour
         poolTypeKey = poolType;
     }
 
-    protected virtual void Despawn()
+    protected virtual void Despawn() //Method push object back to pool
     {
         ObjectPooling.Instance.Despawn(this);
     }
 
-    public virtual void Respawn()
+    public virtual void Respawn() //Method call when object is taking from pool
     {
         
     }
