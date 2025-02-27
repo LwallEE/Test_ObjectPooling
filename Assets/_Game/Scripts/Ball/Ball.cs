@@ -35,7 +35,7 @@ public class Ball : GameUnit
         if (other.gameObject.CompareTag(Constant.WALL_TAG))
         {
             
-            OnTouchWall(other.contacts[0].normal, other.relativeVelocity.normalized);
+            OnTouchWall(other.contacts[0].normal, other.relativeVelocity.normalized*-1f);
         }
     }
 }
