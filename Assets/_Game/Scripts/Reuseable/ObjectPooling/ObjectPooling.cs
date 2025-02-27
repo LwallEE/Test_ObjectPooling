@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoolAmount
+[Serializable]
+public struct PoolAmount
 {
     public EPoolType poolType;
     public GameUnit prefab;
