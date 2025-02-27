@@ -973,6 +973,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfBallSPerSecond: 2
   offsetY: 1
+  typeOfBallToSpawn: 0000000001000000
 --- !u!4 &1164255575
 Transform:
   m_ObjectHideFlags: 0

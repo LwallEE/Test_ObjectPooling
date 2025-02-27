@@ -9,6 +9,7 @@ public class BallLauncher : MonoBehaviour //launcher ball, responsibility for ch
     private bool isMouseDown; //for control is player is holding in screen
     [SerializeField] private float numberOfBallSPerSecond; //speed for shoot
     [SerializeField] private float offsetY; //offset for the bottom pos of screen
+    [SerializeField] private List<EPoolType> typeOfBallToSpawn; //all type of ball to spawn;
     private float currentCountDownToShoot; //Count down time for the next shooting time
     private void Awake()
     {
@@ -64,7 +65,7 @@ public class BallLauncher : MonoBehaviour //launcher ball, responsibility for ch
 
     EPoolType GetRandomBallType()
     {
-        return Random.Range(0, 2) == 0 ? EPoolType.EBallBomb : EPoolType.EBallSplit;
+        return typeOfBallToSpawn[Random.Range(0, typeOfBallToSpawn.Count)];
     }
    
 }
